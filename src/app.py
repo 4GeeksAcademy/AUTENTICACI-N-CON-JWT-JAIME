@@ -6,10 +6,15 @@ from flask import Flask, request, jsonify, url_for, send_from_directory
 from flask_migrate import Migrate
 from flask_swagger import swagger
 from api.utils import APIException, generate_sitemap
-from api.models import db
+from api.models import db,User, TokenBlockedList
 from api.routes import api
 from api.admin import setup_admin
 from api.commands import setup_commands
+from flask_jwt_extended import JWTManager
+from datetime import timedelta
+from flask_bcrypt import Bcrypt
+
+
 
 # from models import Person
 
@@ -30,6 +35,10 @@ else:
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 MIGRATE = Migrate(app, db, compare_type=True)
 db.init_app(app)
+
+app.config["JWT_ACCES_TOKEN_EXPIRES"]=timedelta(hours=2)
+jwt = JWTManager(app)
+bcrypt =Bcrypt(app)
 
 # add the admin
 setup_admin(app)
